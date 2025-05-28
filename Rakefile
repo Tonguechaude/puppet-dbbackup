@@ -18,6 +18,7 @@ begin
   require 'voxpupuli/acceptance/rake'
 rescue LoadError
 end
+task :beaker => "fixtures:prep"
 
 # load optional tasks for releases
 # only available if gem group releases is installed

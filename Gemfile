@@ -15,6 +15,8 @@ end
 
 group :system_tests do
   gem 'voxpupuli-acceptance', '~> 3.5',  :require => false
+  gem 'beaker-puppet', '~> 4.2',          :require => false
+  gem 'puppet_fixtures',                 :require => false
 end
 
 group :release do

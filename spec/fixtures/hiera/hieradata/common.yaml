@@ -1,0 +1,3 @@
+---
+dbbackup::destination: '/var/test/dumps'
+dbbackup::manage_dependencies: true
