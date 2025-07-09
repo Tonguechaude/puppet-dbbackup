@@ -6,7 +6,7 @@ describe 'dbbackup' do
   let(:date) { Time.now.strftime('%Y-%m-%d') }
 
   context 'with basic params' do
-    let(:backup_dir) { "/mnt/dumps/#{date}" }
+    let(:backup_dir) { "/var/test/dumps/#{date}" }
     let(:pp) do
       'include dbbackup'
     end
@@ -88,18 +88,24 @@ describe 'dbbackup' do
     end
 
     it 'runs the dump script and creates the backup dumps' do
-      tries = 0
-      until File.directory?(backup_custom_dir) || tries >= 10
+      backup_dir_exists = false
+      10.times do
+        result = shell("test -d #{backup_custom_dir}", acceptable_exit_codes: [0, 1])
+        if result.exit_code == 0
+          backup_dir_exists = true
+          break
+        end
         sleep(6)
-        tries += 1
       end
-
       raise "Backup directory #{backup_custom_dir} does not exist after waiting" unless File.directory?(backup_custom_dir)
 
-      dumps1 = Dir.glob("#{backup_custom_dir}/*.mysql.gz")
-      dumps2 = Dir.glob("#{backup_custom_dir}/*.psql.gz")
-      expect(dumps1).not_to be_empty
-      expect(dumps2).not_to be_empty
+      describe command("ls #{backup_custom_dir}/*.mysql.gz") do
+        its(:exit_status) { is_expected.to eq 0 }
+      end
+
+      describe command("ls #{backup_custom_dir}/*.psql.gz") do
+        its(:exit_status) { is_expected.to eq 0 }
+      end
     end
   end
 end
